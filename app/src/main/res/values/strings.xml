@@ -1,0 +1,23 @@
+<resources>
+    <!-- Nombre de la aplicacion -->
+    <string name="app_name">TP_n2_PlatDesarrollo</string>
+
+    <!-- strings correspondientes al menu desplegable -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <!-- sub menus del menu desplegable -->
+    <string name="menu_home">Home</string>
+    <string name="menu_config">Configuracion</string>
+    <string name="menu_about">Acerca de</string>
+
+    <!-- menu de pantalla -->
+    <string name="action_settings">Settings</string>
+    
+    <!-- valores de medicion -->
+    <string name="perdiodo">Perido: %1$.2f</string>
+
+</resources>
