@@ -1,9 +1,6 @@
 package com.desarrollo.tp_n2_platdesarrollo.ui.home;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -19,23 +16,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
-import com.desarrollo.tp_n2_platdesarrollo.MainActivity;
 import com.desarrollo.tp_n2_platdesarrollo.R;
 import com.desarrollo.tp_n2_platdesarrollo.models.FabCustom;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import com.desarrollo.tp_n2_platdesarrollo.models.SensorTrigger;
 
 public class HomeFragment extends Fragment {
 
     //private HomeViewModel homeViewModel;
 
     private ProgressBar progressBar;
-    private  SensorManager manager;
+    private FabCustom fab;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +50,10 @@ public class HomeFragment extends Fragment {
 
 
         final TextView tMedicion = root.findViewById(R.id.tMedicion);
+        SensorManager manager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        Sensor sensor = manager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        float maxRange = sensor.getMaximumRange();
+        tMedicion.setText(getString(R.string.perdiodo, maxRange) );
         /*
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -69,7 +65,7 @@ public class HomeFragment extends Fragment {
 
         progressBar = root.findViewById(R.id.progressBar);
 
-        FabCustom fab = root.findViewById(R.id.fab);
+        fab = root.findViewById(R.id.fab);
 
         fab.setOnClickListener(new OnClickMedicion());
         return root;
@@ -93,50 +89,50 @@ public class HomeFragment extends Fragment {
                 } else { // activa el boton y finaliza la tarea
                     fab.activar();
                 }
-
-
             }
         }
     }
 
-    public  class Timer extends AsyncTask<Void, Integer, Boolean> implements SensorEventListener {
+    public  class Timer extends AsyncTask<Void, Integer, Long> {
 
         Long firstTime;
-        Long LastTime;
-        Long tend;
+        Long lastTime;
         Long periodo;
         Sensor sensor;
-        boolean flagUp;
-        boolean flagDown;
 
-        float medicionAnterior;
-        float medicion;
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected Long doInBackground(Void... voids) {
 
-            manager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+            SensorManager manager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
             sensor = manager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
-            firstTime = Long.valueOf(-1);
 
 
-            manager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_FASTEST);
+            SensorTrigger sensorTrigger = new SensorTrigger();
 
-            periodo = 0L;
-            while(true){
+            manager.registerListener(sensorTrigger,sensor,SensorManager.SENSOR_DELAY_FASTEST);
 
-                if(flagUp && !flagDown){
+            Log.i("ENTRADA","Entro al evento");
 
+            while(lastTime == null){
+
+                if(sensorTrigger.isTrigger() && firstTime == null ){
+                    firstTime = System.currentTimeMillis();
+                    sensorTrigger.resetTrigger();
+                    publishProgress(50);
+                }else if(sensorTrigger.isTrigger() && firstTime != null){
+                    lastTime = System.currentTimeMillis();
+                    sensorTrigger.resetTrigger();
+                    publishProgress(100);
+
+                    periodo = lastTime - firstTime;
+                    fab.activar();
+                    progressBar.setVisibility(View.INVISIBLE);
                 }
 
-                Log.i("EVENTO", flagUp? "pulso positivo": "pulso bajo");
             }
-
-
-
-
-          //  return true;
+            return periodo;
         }
 
         @Override
@@ -153,21 +149,17 @@ public class HomeFragment extends Fragment {
             progressBar.setProgress(0);
             progressBar.setVisibility(View.VISIBLE);
 
-
-            // TODO: valores de prueba refactorizar despues
-            flagUp = false;
-            flagDown = false;
-
-            medicionAnterior = -1;
-
+            firstTime = null;
+            lastTime = null;
+            periodo = null;
         }
 
 
         @Override
-        protected void onPostExecute(Boolean aBoolean) {
+        protected void onPostExecute(Long aLong) {
 
-            super.onPostExecute(aBoolean);
-            Toast.makeText(getContext(),"Tarea Finalizada en " + tend , Toast.LENGTH_LONG).show();
+            super.onPostExecute(aLong);
+            Toast.makeText(getContext(),"medio periodo: " + aLong + "miliseg" , Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -176,28 +168,6 @@ public class HomeFragment extends Fragment {
             Toast.makeText(getContext(),"Tarea Cancelada",Toast.LENGTH_LONG).show();
         }
 
-        @Override
-        public void onSensorChanged(SensorEvent sensorEvent) {
-            float medicion = sensorEvent.values[0];
-            float dmax = sensorEvent.sensor.getMaximumRange();
-
-            if(medicion != dmax) { // flag decendente
-                flagDown =true;
-                flagUp = false;
-                medicionAnterior = medicion;
-
-            }else if(medicionAnterior != dmax && medicion == dmax){ //flag acendente
-                medicionAnterior = medicion;
-                flagUp = true;
-                flagDown = false;
-            }
-
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int i) {
-            // no se usa ya que la presicion del sensor de proximidad no va a cambiar
-        }
     }
 
 }
