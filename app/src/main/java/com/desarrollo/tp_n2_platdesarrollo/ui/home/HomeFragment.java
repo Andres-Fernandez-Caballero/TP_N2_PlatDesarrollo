@@ -1,12 +1,11 @@
 package com.desarrollo.tp_n2_platdesarrollo.ui.home;
 
 import android.content.Context;
-import android.content.Loader;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +15,36 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import com.desarrollo.tp_n2_platdesarrollo.R;
+import com.desarrollo.tp_n2_platdesarrollo.fragments.Fragment_medicion_sin_resultados;
+import com.desarrollo.tp_n2_platdesarrollo.fragments.Fragment_medicion_sin_sensor;
 import com.desarrollo.tp_n2_platdesarrollo.models.FabCustom;
 import com.desarrollo.tp_n2_platdesarrollo.models.SensorTrigger;
 
 public class HomeFragment extends Fragment {
-    private static final int MUESTRAS_ESTABLECIDAS = 3;
-    private static final int NUMERO_ASPAS_ESTABLECIDAS = 2;
+
+    /* valores por defecto de las mediciones no son los valores de la configuracion estan para evitar nulls... */
+    private static final String MUESTRAS_ESTABLECIDAS = "3";
+    private static final String NUMERO_ASPAS_ESTABLECIDAS = "2";
+
+    //manager de fragmentos
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+
+    // manager de sensor
+    SensorManager sensorManager;
+
+    // sensor de proximidad
+    Sensor sensorProximidad;
+
 
     //private HomeViewModel homeViewModel;
 
+    // elementos de la intefaz visual
     private ProgressBar progressBar;
     private FabCustom fab;
 
@@ -34,27 +52,29 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
 
-       // homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-
-
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        /*
-        //final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-              //  textView.setText(s);
-            }
-        });
-        */
+
+        // obtengo una instancia de sensormanager
+        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        // defino un sensor de tipo proximidad si no existe devuelve null
+        sensorProximidad = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        fragmentManager = getFragmentManager();
+        assert fragmentManager != null;
+        fragmentTransaction = fragmentManager.beginTransaction();
+        if (sensorProximidad != null) {
+            // si el dispositivo tiene sensor de proximidad muestra la pantalla normal
+            fragmentTransaction.add(R.id.fragment_contenedor_resultados, new Fragment_medicion_sin_resultados());
+        } else {
+            // si el dispositivo no tiene sensor de proximidad muestra el fragment de no disponible
+            fragmentTransaction.add(R.id.fragment_contenedor_resultados, new Fragment_medicion_sin_sensor());
+
+        }
+        fragmentTransaction.commit();
 
 
-
-        final TextView tMedicion = root.findViewById(R.id.tMedicion);
         SensorManager manager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         Sensor sensor = manager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
-        float maxRange = sensor.getMaximumRange();
-        tMedicion.setText(getString(R.string.perdiodo, maxRange) );
 
         progressBar = root.findViewById(R.id.progressBar);
 
@@ -64,14 +84,14 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
-    private class OnClickMedicion implements View.OnClickListener{
+    private class OnClickMedicion implements View.OnClickListener {
 
         @Override
         public void onClick(View view) {
 
-            Timer task = new Timer();
+            CalculadorPeriodo task = new CalculadorPeriodo();
 
-            if(view.getClass() == FabCustom.class){
+            if (view.getClass() == FabCustom.class) {
 
                 FabCustom fab = (FabCustom) view;
 
@@ -86,69 +106,61 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    public  class Timer extends AsyncTask<Void, Integer, Long> {
-
-        Long firstTime;
-        Long lastTime;
-        Long periodo;
-        SensorManager manager;
-        Sensor sensor;
+    public class CalculadorPeriodo extends AsyncTask<Void, Integer, Long> {
 
 
+        /* metodo que realiza el hilo en segundo plano */
         @Override
         protected Long doInBackground(Void... voids) {
-            int progreso =  (int) 100/MUESTRAS_ESTABLECIDAS;
+
+            /* recogo las variables de las configuraciones de la aplicacion */
+            SharedPreferences preferences = PreferenceManager
+                    .getDefaultSharedPreferences(getContext());
+
+            int cant_aspas = Integer.parseInt(preferences.getString("num_aspas", NUMERO_ASPAS_ESTABLECIDAS));
+            int cant_muestras = Integer.parseInt(preferences.getString("cant_muestras", MUESTRAS_ESTABLECIDAS));
+
+            int progreso = (int) 100 / cant_muestras; // constante de progreso
 
             Long periodoMedio = 0L;
-            for (int muestra = 1; muestra <= MUESTRAS_ESTABLECIDAS; muestra++){
-                Long periodo =0L;
+            for (int muestra = 1; muestra <= cant_muestras; muestra++) {
+                Long periodo = 0L;
 
-                for(int subPeriodo = 1 ; subPeriodo <= NUMERO_ASPAS_ESTABLECIDAS ; subPeriodo++){
+                for (int subPeriodo = 1; subPeriodo <= cant_aspas; subPeriodo++) {
                     periodo += medirTs();
                 }
 
-                publishProgress(progreso * muestra);
+                publishProgress(progreso * muestra); //cada vez q termina una muestra avanza la progress bar
                 periodoMedio += periodo;
             }
 
-            periodoMedio = periodoMedio / MUESTRAS_ESTABLECIDAS;
+            periodoMedio = periodoMedio / cant_muestras;
 
             return periodoMedio;
         }
 
         private long medirTs() {
 
-            firstTime = 0L;
-            lastTime = 0L;
-
-            SensorManager manager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-            sensor = manager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+            Long firstTime = 0L;
+            Long lastTime = 0L;
 
             SensorTrigger sensorTrigger = new SensorTrigger();
 
-            manager.registerListener(sensorTrigger,sensor,SensorManager.SENSOR_DELAY_FASTEST);
-            long ts = 0;
+            sensorManager.registerListener(sensorTrigger, sensorProximidad, SensorManager.SENSOR_DELAY_FASTEST);
 
-            //Log.i("TRIGGER_SHOT","Entro al evento");
+            while (lastTime == 0L) {
 
-
-            while(lastTime == 0L){
-
-                if(sensorTrigger.isTrigger() && firstTime == 0L ){
+                if (sensorTrigger.isTrigger() && firstTime == 0L) {
                     firstTime = System.currentTimeMillis();
                     sensorTrigger.resetTrigger();
-                  //  publishProgress(50);
-                }else if(sensorTrigger.isTrigger() && firstTime != 0L){
+                } else if (sensorTrigger.isTrigger() && firstTime != 0L) {
                     lastTime = System.currentTimeMillis();
                     sensorTrigger.resetTrigger();
-                  //  publishProgress(100);
-
-                    ts = lastTime - firstTime;
 //                    progressBar.setVisibility(View.INVISIBLE);
                 }
             }
 
-            return ts;
+            return lastTime - firstTime;
         }
 
         @Override
@@ -158,31 +170,27 @@ public class HomeFragment extends Fragment {
             progressBar.setProgress(progreso);
         }
 
+        /* eventos antes de empezar el hilo */
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             progressBar.setMax(100);
             progressBar.setProgress(0);
             progressBar.setVisibility(View.VISIBLE);
-
-            //TODO: hacer que ande
         }
 
+        /* eventos al terminar el hilo */
         @Override
-        protected void onPostExecute(Long aLong) {
-
-            super.onPostExecute(aLong);
+        protected void onPostExecute(Long result) {
+            super.onPostExecute(result);
             fab.activar();
             progressBar.setVisibility(View.INVISIBLE);
-            Toast.makeText(getContext(),"medio periodo: " + aLong + "miliseg" , Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            Toast.makeText(getContext(),"Tarea Cancelada",Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Tarea Cancelada", Toast.LENGTH_LONG).show();
         }
-
     }
-
 }

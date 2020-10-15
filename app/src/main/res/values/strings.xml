@@ -16,8 +16,31 @@
 
     <!-- menu de pantalla -->
     <string name="action_settings">Settings</string>
-    
+
     <!-- valores de medicion -->
     <string name="perdiodo">Perido: %1$.2f</string>
+    <!-- Titulos Configuracion -->
+    <string name="opciones_medicion_titulo">Opciones de muestreo</string>
+    <string name="cantidad_muestras_titulo">Cantidad de muestras</string>
+
+    <!-- mensages Preferences -->
+    <string name="numero_aspas_opcion">Numero de Aspas</string>
+    <string name="cant_muestras_opcion">Cantidad de muestras</string>
+    <string name="summary_cant_muestras_opcion">
+        Mientras mayor sea el numero de muestras mas precisa sera la medicion a costa de tardar mas tiempo en realizarse.
+    </string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Mensaje en fragments resultado -->
+    <string name="sin_sensor_mensaje">Celular Sin Sensor De Distancia</string>
+    <string name="sin_medicion_mensaje">No se han Registrado mediciones</string>
 
 </resources>

@@ -21,9 +21,8 @@
 
     <fragment
         android:id="@+id/nav_config"
-        android:name="com.desarrollo.tp_n2_platdesarrollo.ui.gallery.GalleryFragment"
-        android:label="@string/menu_config"
-        tools:layout="@layout/fragment_config" />
+        android:name="com.desarrollo.tp_n2_platdesarrollo.ui.configuracion.fragment_configuraciones"
+        android:label="@string/menu_config" />
 
     <fragment
         android:id="@+id/nav_about"
