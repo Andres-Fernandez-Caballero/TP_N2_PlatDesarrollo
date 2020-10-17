@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.AttributeSet;
-import android.view.View;
 
-import com.desarrollo.tp_n2_platdesarrollo.ui.home.HomeFragment;
+import com.desarrollo.tp_n2_platdesarrollo.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class FabCustom extends FloatingActionButton  {
@@ -28,24 +27,38 @@ public class FabCustom extends FloatingActionButton  {
         activar();
     }
 
-
     @Override
     public boolean isActivated() {
         return activated;
     }
 
+    /**
+     * Este metodo dispone la apariencia del FabCustom en la forma DESACTIVADA,
+     * cambia su fondo e icono y coloca el flag de activaded en FALSE
+     */
     public void desactivar(){
         //TODO: hacer que se desactive el boton y cambie de aspecto
         this.activated = false;
         this.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(0, 145, 234)));
-
+        this.setImageResource(R.drawable.ic_cruz);
     }
 
+    /**
+     * Este metodo dispone la apariencia del FabCustom en la forma ACTIVADA,
+     *      * cambia su fondo e icono y coloca el flag de activaded en TRUE
+     */
     public void activar(){
-        //TODO: hacer que se active y vuelva a su aspecto original
         this.activated = true;
         this.setBackgroundTintList(ColorStateList.valueOf(Color.rgb(3, 218, 197))); //colorAccent
+        this.setImageResource(R.drawable.ic_compaz);
+    }
 
+    public void ocultar(){
+        this.hide();
+    }
+
+    public void mostrar(){
+        this.show();
     }
 
 }

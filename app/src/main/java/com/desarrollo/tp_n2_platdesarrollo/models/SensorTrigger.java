@@ -39,7 +39,7 @@ public class SensorTrigger implements SensorEventListener {
         medicionAnterior = -1; // como buena practica inicio el valor en uno que no dispare el trigger accidentalmente
     }
 
-    public boolean isTrigger() {
+    public boolean isFired() {
         return trigger;
     }
 

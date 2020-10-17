@@ -26,7 +26,7 @@
 
     <fragment
         android:id="@+id/nav_about"
-        android:name="com.desarrollo.tp_n2_platdesarrollo.ui.slideshow.SlideshowFragment"
+        android:name="com.desarrollo.tp_n2_platdesarrollo.ui.about.AboutFragment"
         android:label="@string/menu_about"
         tools:layout="@layout/fragment_about" />
 </navigation>

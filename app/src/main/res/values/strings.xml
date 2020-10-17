@@ -3,11 +3,11 @@
     <string name="app_name">TP_n2_PlatDesarrollo</string>
 
     <!-- strings correspondientes al menu desplegable -->
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open">abre el menu hamburgesa</string>
+    <string name="navigation_drawer_close">cierra el menu hamburgesa</string>
+    <string name="nav_header_title">TP N2 Plat. Desarrollo </string>
+    <string name="nav_header_subtitle">andres.fernandezcaballero@davinci</string>
+    <string name="nav_header_desc">menu hamburguesa</string>
 
     <!-- sub menus del menu desplegable -->
     <string name="menu_home">Home</string>
@@ -17,8 +17,19 @@
     <!-- menu de pantalla -->
     <string name="action_settings">Settings</string>
 
-    <!-- valores de medicion -->
-    <string name="perdiodo">Perido: %1$.2f</string>
+    <!-- valores del template resultado -->
+    <!-- utilizo un solo string resource para mostrar todos los resultados de la medicion
+        ***** parametros ******
+        * long periodo
+        * float frecuencia
+    -->
+    <string name="string_template_result_periodo_frecuencia">
+        <![CDATA[
+        <p style="color:#0091ea;">Resultados</p>
+        <p style="font-size: larger;"><span style="color:#0091ea">Periodo: </span><strong >%1d</strong> milliseg</p>
+        <p style="font-size: larger;"><span style="color:#0091ea">Frecuencia: </span><span style="font-weight: bold;">%2.2f</span> hz</p>
+        ]]>
+    </string>
     <!-- Titulos Configuracion -->
     <string name="opciones_medicion_titulo">Opciones de muestreo</string>
     <string name="cantidad_muestras_titulo">Cantidad de muestras</string>
@@ -30,17 +41,14 @@
         Mientras mayor sea el numero de muestras mas precisa sera la medicion a costa de tardar mas tiempo en realizarse.
     </string>
 
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
     <!-- Mensaje en fragments resultado -->
     <string name="sin_sensor_mensaje">Celular Sin Sensor De Distancia</string>
     <string name="sin_medicion_mensaje">No se han Registrado mediciones</string>
 
+    <!-- fragment about us -->
+    <string name="about_us">About Us</string>
+    <string name="descripcion_proyecto">Este proyecto nacio con la idea de poder generar una medicion confiable a traves de alguno de los distintos sensores de un celular con sistema operativo Android.\nDespues de un analizis de varias posibilidades se eligio como objetivo "Tomar la medicion de la frecuencia y periodo de un motor."\nPara esta finalidad se utilizo el sensor de proximidad frontal del celular, conceptos de matematica basica, documentacion provista por android-studio, ayuda provista por la comunidad stackoverflow y conceptos avanzados de java aprendidos durante la carrera.\nEsta aplicacion funcional es el resultado de este proyecto.</string>
+    <string name="documentacion_titulo">Documentacion</string>
+    <string name="documentacion_detalle">Toda la documentacion se encuentra alojada en el repositorio de github "https://github.com/Andres-Fernandez-Caballero/TP_N2_PlatDesarrollo.git"</string>
+    <string name="esperando_medicion">Esperando medicion</string>
 </resources>

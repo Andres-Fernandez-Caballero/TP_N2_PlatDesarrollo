@@ -8,7 +8,8 @@
             app:entries="@array/variedad_aspas"
             app:defaultValue="2"
             app:entryValues="@array/variedad_aspas"
-            app:useSimpleSummaryProvider="true" />
+            app:summary="Debe asignarse la cantidad de aspas correspondientes al motor utilizado"
+            app:useSimpleSummaryProvider="false" />
 
         <ListPreference
             app:key="cant_muestras"
@@ -17,7 +18,7 @@
             app:entryValues="@array/variedad_cant_muestras"
             app:defaultValue="2"
             app:summary="@string/summary_cant_muestras_opcion"
-            app:useSimpleSummaryProvider="true" />
+            app:useSimpleSummaryProvider="false" />
 
     </PreferenceCategory>
 

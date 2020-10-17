@@ -16,8 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Sin Mediciones Realizadas"
-            android:textColor="#FF5722"
+            android:text="@string/esperando_medicion"
+            android:textColor="@color/colorPrimary"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -26,20 +26,20 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="194dp"
-            android:layout_height="172dp"
+            android:layout_width="236dp"
+            android:layout_height="219dp"
             android:contentDescription="Imagen descriptiva del caso de uso, sin mediciones actualmente"
             android:scaleType="centerInside"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.548"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.499"
-            app:srcCompat="@drawable/sin_mediciones"
+            app:layout_constraintVertical_bias="0.398"
+            app:srcCompat="@drawable/ic_sin_mediciones"
             app:tint="#2196F3"
-            tools:src="@drawable/ic_form_submission"
-            tools:srcCompat="@drawable/sin_mediciones" />
+            tools:src="@drawable/ic_sin_mediciones"
+            tools:srcCompat="@drawable/ic_sin_mediciones" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
