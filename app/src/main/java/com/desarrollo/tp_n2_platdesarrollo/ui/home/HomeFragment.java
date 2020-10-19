@@ -29,10 +29,10 @@ import com.desarrollo.tp_n2_platdesarrollo.models.SensorTrigger;
 public class HomeFragment extends Fragment {
 
     // manager de sensor
-    SensorManager sensorManager;
+    private SensorManager sensorManager;
 
     // sensor de proximidad
-    Sensor sensorProximidad;
+    private Sensor sensorProximidad;
 
     // elementos de la intefaz visual
     private ProgressBar progressBar;
